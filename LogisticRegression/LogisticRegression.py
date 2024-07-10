@@ -66,8 +66,3 @@ plt.show()
 # Verileri bir tabloda gösterdiğimizde ortada çıkan çizgi tahmin ayrım çizgisidir.
 # Tahmin verilerini node'ların bu çizginin hangi tarafında bulunduğunda göre karar verir.
 
-
-
-
-
-
