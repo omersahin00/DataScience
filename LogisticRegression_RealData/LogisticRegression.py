@@ -26,5 +26,18 @@ from sklearn.metrics import confusion_matrix, accuracy_score
 
 cm = confusion_matrix(y_test, y_pred)
 
-AccuracyScore = accuracy_score(y_test, y_pred)
+AccuracyScore = accuracy_score(y_test, y_pred) #-> Sağlıklı bir sonuç değildir.
+
+
+#k-Fold Cross Validation yöntemiyle modelin performansının ölçülmesi
+
+from sklearn.model_selection import cross_val_score
+
+accuricies = cross_val_score(estimator = classifier, X = x, y = y, cv = 10)
+
+AccuriciesMean = accuricies.mean() * 100
+
+#-> Standart sapmasına da mutlaka bakmak lazım!
+
+StadartDeviation = accuricies.std() * 100
 
