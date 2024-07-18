@@ -16,7 +16,6 @@ print(kmeans.inertia_)
 """
 
 
-"""
 # 1'den 10'a kadar tüm cluster adetleri deneniyor:
 
 wcss = []
@@ -31,7 +30,7 @@ plt.title('Elbow Method')
 plt.xlabel('Number of clusters')
 plt.ylabel('Inertia')
 plt.show()
-"""
+
 
 #Optimum cluster sayısıyla K-Means modelinin kurulması
 kmeans = KMeans(n_clusters = 5, init = "k-means++", random_state = 0)
