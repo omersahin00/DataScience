@@ -54,5 +54,3 @@ plt.xlabel("Yıllık Gelir")
 plt.ylabel("Harcama Skoru")
 plt.show()
 
-return clusters_kordinate
-    
