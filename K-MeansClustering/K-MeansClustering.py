@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from kneed import KneeLocator
 
 dataset = pd.read_csv("Mall_Customers.csv")
 x = dataset.iloc[:, 3:5].values
@@ -31,9 +32,11 @@ plt.xlabel('Number of clusters')
 plt.ylabel('Inertia')
 plt.show()
 
+kl = KneeLocator(range(1, 11), wcss, curve="convex", direction="decreasing")
+elbow_point = kl.elbow
 
 #Optimum cluster sayısıyla K-Means modelinin kurulması
-kmeans = KMeans(n_clusters = 5, init = "k-means++", random_state = 0)
+kmeans = KMeans(n_clusters = elbow_point, init = "k-means++", random_state = 0)
 y_kmeans = kmeans.fit_predict(x)
 clusters_kordinate = kmeans.cluster_centers_
 
@@ -45,14 +48,11 @@ plt.scatter(x[y_kmeans == 2, 0], x[y_kmeans == 2, 1], s = 100, c = "red", label 
 plt.scatter(x[y_kmeans == 3, 0], x[y_kmeans == 3, 1], s = 100, c = "purple", label = "Class 4")
 plt.scatter(x[y_kmeans == 4, 0], x[y_kmeans == 4, 1], s = 100, c = "yellow", label = "Class 5")
 plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s = 300, c = "black", label = "Centroids")
-plt.legend() #-> Grafiğe noktaların ne anlama geldiğini gösteren bir tablo ekler.
+#plt.legend() #-> Grafiğe noktaların ne anlama geldiğini gösteren bir tablo ekler.
 plt.title("Müşteri Segmentasyonu")
 plt.xlabel("Yıllık Gelir")
 plt.ylabel("Harcama Skoru")
 plt.show()
 
-
-
-
-
-
+return clusters_kordinate
+    
