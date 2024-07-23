@@ -65,7 +65,9 @@ from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 1)
 
 
-#Naive Bayes Modelinin Kurulması
+# TAHMİNLER:
+
+#Naive Bayes Modeli ile Tahmin      BAŞARISI: 0.69
 from sklearn.naive_bayes import GaussianNB
 classifier = GaussianNB()
 
@@ -75,11 +77,22 @@ y_pred = classifier.predict(x_test)
 
 from sklearn.metrics import confusion_matrix, accuracy_score
 
-cm = confusion_matrix(y_test, y_pred)
+cmNB = confusion_matrix(y_test, y_pred)
 AccuracyScoreNB = accuracy_score(y_test, y_pred)
 
 
 
+#SVM Modeli ile Tahmin             BAŞARISI: 0.825
+from sklearn.svm import SVC
+classifier = SVC(probability = True, kernel = "rbf")
+
+classifier.fit(x_train, y_train)
+
+y_pred = classifier.predict(x_test)
+
+from sklearn.metrics import confusion_matrix, accuracy_score
+cmSVM = confusion_matrix(y_test, y_pred)
+AccuracyScoreSVM = accuracy_score(y_test, y_pred)
 
 
 
