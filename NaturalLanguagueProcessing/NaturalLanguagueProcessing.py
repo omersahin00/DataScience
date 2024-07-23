@@ -17,6 +17,7 @@ for i in range(0, 1000):
     dataset["Review"][i] = cleanText
 
 
+#Stopwords
 import nltk
 nltk.download("stopwords")
 from nltk.corpus import stopwords
@@ -31,5 +32,17 @@ for i in range(0, 1000):
             continue
         else:
             temp_list.append(word)
+    dataset["Review"][i] = temp_list
+
+
+#Stemming
+from nltk.stem.porter import PorterStemmer
+ps = PorterStemmer()
+
+
+for i in range(0, 1000):
+    temp_list = []
+    for word in dataset["Review"][i]:
+        temp_list.append(ps.stem(word))
     dataset["Review"][i] = temp_list
 
