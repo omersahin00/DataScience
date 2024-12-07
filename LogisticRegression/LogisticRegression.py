@@ -29,7 +29,6 @@ x_test = ss.transform(x_test)
 #========================================================================
 
 #==========================Logistic Regression===========================
-# Logistic Regression modelinin oluşturulması
 classifier = LogisticRegression(random_state=0)
 classifier.fit(x_train, y_train)
 
