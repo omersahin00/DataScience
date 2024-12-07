@@ -48,7 +48,7 @@ plt.contourf(X1, X2, classifier.predict(ss.transform(np.array([X1.ravel(), X2.ra
 plt.xlim(X1.min(), X1.max())
 plt.ylim(X2.min(), X2.max())
 for i, j in enumerate(np.unique(y_set)):
-    plt.scatter(x_set[y_set == j, 0], x_set[y_set == j, 1], c = ListedColormap(('red', 'blue'))(i), label = j)
+    plt.scatter(x_set[y_set == j, 0], x_set[y_set == j, 1], color = ListedColormap(('red', 'blue'))(i), label = j)
 plt.title('Decision Tree (Gini) - Test Set')
 plt.xlabel('Yaş')
 plt.ylabel('Maaş')
