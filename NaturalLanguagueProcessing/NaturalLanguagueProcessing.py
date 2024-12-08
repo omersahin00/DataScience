@@ -1,104 +1,63 @@
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem.porter import PorterStemmer
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 
+# Veri setini yükleme
 dataset = pd.read_csv("Restaurant_Reviews.tsv", sep="\t", quoting=3)
 
-#Cleaning the Text
-import re
-
-print(dataset["Review"][0])
-print(re.sub("[^a-z A-Z]", "", dataset["Review"][0]))
-
-for i in range(0, 1000):
-    cleanText = re.sub("[^a-z A-Z]", "", dataset["Review"][i])
-    cleanText = cleanText.upper().lower()
-    cleanText = cleanText.split()
-    dataset["Review"][i] = cleanText
-
-
-#Stopwords
-import nltk
+# Gerekli NLTK Verilerini İndirme
 nltk.download("stopwords")
-from nltk.corpus import stopwords
 
+# Metin Temizleme ve Ön İşleme
+ps = PorterStemmer()
 all_stopwords = stopwords.words("english")
 all_stopwords.remove("not")
 
-for i in range(0, 1000):
-    temp_list = []
-    for word in dataset["Review"][i]:
-        if word in all_stopwords:
-            continue
-        else:
-            temp_list.append(word)
-    dataset["Review"][i] = temp_list
+def clean_text(text):
+    # Sadece harf karakterlerini bırak
+    text = re.sub("[^a-zA-Z]", " ", text)
+    # Küçük harfe dönüştür
+    text = text.lower()
+    # Kelimelere ayır ve stopwords ile stem işlemi uygula
+    words = [ps.stem(word) for word in text.split() if word not in all_stopwords]
+    return " ".join(words)
 
+# Tüm yorumlara temizleme işlemini uygula
+dataset["Cleaned_Review"] = dataset["Review"].apply(clean_text)
 
-#Stemming
-from nltk.stem.porter import PorterStemmer
-ps = PorterStemmer()
+# Özellik ve hedef değişkenleri ayırma
+cv = CountVectorizer(max_features=1500)
+x = cv.fit_transform(dataset["Cleaned_Review"]).toarray()
+y = dataset["Liked"].values
 
+# Eğitim ve Test Verilerini Bölme
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=1)
 
-for i in range(0, 1000):
-    temp_list = []
-    for word in dataset["Review"][i]:
-        temp_list.append(ps.stem(word))
-    dataset["Review"][i] = temp_list
+# Naive Bayes Modeli
+nb_classifier = GaussianNB()
+nb_classifier.fit(x_train, y_train)
+y_pred_nb = nb_classifier.predict(x_test)
 
+# Naive Bayes Performans Sonuçları
+print("Naive Bayes Results:")
+print(confusion_matrix(y_test, y_pred_nb))
+print(f"Accuracy: {accuracy_score(y_test, y_pred_nb):.2f}")
+print(classification_report(y_test, y_pred_nb))
 
-#Cümleleri geri birleştirme
-for i in range(0, 1000):
-    dataset["Review"][i] = " ".join(dataset["Review"][i])
+# SVM Modeli
+svm_classifier = SVC(probability=True, kernel="rbf", random_state=1)
+svm_classifier.fit(x_train, y_train)
+y_pred_svm = svm_classifier.predict(x_test)
 
-
-#Bag of Words
-from sklearn.feature_extraction.text import CountVectorizer
-cv = CountVectorizer(max_features = 1500)
-
-x = cv.fit_transform(dataset["Review"]).toarray()
-y = dataset.iloc[:, -1].values
-
-
-#Train ve Test Setleri
-from sklearn.model_selection import train_test_split
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 1)
-
-
-# TAHMİNLER:
-
-#Naive Bayes Modeli ile Tahmin      BAŞARISI: 0.69
-from sklearn.naive_bayes import GaussianNB
-classifier = GaussianNB()
-
-classifier.fit(x_train, y_train)
-
-y_pred = classifier.predict(x_test)
-
-from sklearn.metrics import confusion_matrix, accuracy_score
-
-cmNB = confusion_matrix(y_test, y_pred)
-AccuracyScoreNB = accuracy_score(y_test, y_pred)
-
-
-
-#SVM Modeli ile Tahmin             BAŞARISI: 0.825
-from sklearn.svm import SVC
-classifier = SVC(probability = True, kernel = "rbf")
-
-classifier.fit(x_train, y_train)
-
-y_pred = classifier.predict(x_test)
-
-from sklearn.metrics import confusion_matrix, accuracy_score
-cmSVM = confusion_matrix(y_test, y_pred)
-AccuracyScoreSVM = accuracy_score(y_test, y_pred)
-
-
-
-
-
-
-
-
-
+# SVM Performans Sonuçları
+print("\nSVM Results:")
+print(confusion_matrix(y_test, y_pred_svm))
+print(f"Accuracy: {accuracy_score(y_test, y_pred_svm):.2f}")
+print(classification_report(y_test, y_pred_svm))
